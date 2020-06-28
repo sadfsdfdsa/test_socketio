@@ -1,6 +1,7 @@
+import os
+
 from flask import Flask, jsonify, render_template
 from flask_socketio import SocketIO, emit, send, join_room, leave_room
-from os import environ
 
 app = Flask(__name__,
             static_url_path='',
@@ -49,4 +50,4 @@ def index():
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, port=int(os.environ.get('PORT', '5000')))
