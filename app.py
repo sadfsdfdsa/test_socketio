@@ -1,5 +1,4 @@
 import os
-from threading import Lock
 
 from flask import Flask, jsonify, render_template
 from flask_socketio import SocketIO, emit, send, join_room, leave_room
@@ -10,10 +9,7 @@ app = Flask(__name__,
             template_folder='static')
 
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, cors_allowed_origins='*',  async_mode=None)
-
-thread = None
-thread_lock = Lock()
+socketio = SocketIO(app, cors_allowed_origins='*')
 
 rooms = ['room1', 'room2', 'room3']
 
