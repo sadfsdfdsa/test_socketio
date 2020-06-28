@@ -1,35 +1,51 @@
-from flask import Flask, render_template
-from database.database import Database
-from config.config import Config
+from flask import Flask, jsonify, render_template
+from flask_socketio import SocketIO, emit, send, join_room, leave_room
 
-# custom app settings for REST API and frontend on vue
 app = Flask(__name__,
             static_url_path='',
             static_folder='static',
             template_folder='static')
 
-app.config.from_object(Config)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app, cors_allowed_origins='*')
 
-# Database init
-db = Database("db.db")
-db.create_tables()
-
-# DO NOT DELETE OR MOVE ON TOP
-# import routes
-from routes.User import *
+rooms = ['room1', 'room2', 'room3']
 
 
-# frontend index page
+@socketio.on('join_room')
+def join(data):
+    if data['room'] in rooms:
+        join_room(data['room'])
+        emit("system_event", "User {0} has joined the room".format(data['user']), room=data['room'])
+        # emit('system_event', 'You are join to room ' + data['room'])
+        return
+    emit('system_event', 'Error with joining a room')
+
+
+@socketio.on('leave_room')
+def join(data):
+    if data['room'] in rooms:
+        leave_room(data['room'])
+        emit("system_event", "User {0} has leave from the room".format(data['user']), room=data['room'])
+        # emit('system_event', 'You are leave from a room ' + data['room'])
+        return
+    emit('system_event', 'Error with leaving from a room')
+
+
+@app.route('/api/v1/rooms/', methods=['GET'])
+def get_rooms():
+    return jsonify(rooms)
+
+
+@socketio.on('msg_server')
+def msg(json):
+    emit("msg_client", json, room=json['room'])
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
 
-# give all to vue router
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('index.html')
-
-
 if __name__ == '__main__':
-    app.run()
+    socketio.run(app)

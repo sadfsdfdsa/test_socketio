@@ -8,7 +8,7 @@ module.exports = {
             '^/api/*': {
                 // proxies request for api to localhost:80
                 target: "http://localhost:5000/"
-            },
+            }
         }
     },
     configureWebpack: {
