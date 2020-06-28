@@ -2,7 +2,6 @@ from flask import Flask, jsonify, render_template
 from flask_socketio import SocketIO, emit, send, join_room, leave_room
 from os import environ
 
-
 app = Flask(__name__,
             static_url_path='',
             static_folder='static',

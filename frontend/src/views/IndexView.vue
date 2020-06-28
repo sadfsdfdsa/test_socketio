@@ -66,7 +66,8 @@
         }),
         methods: {
             init_sock() {
-                this.socket = io.connect('http://127.0.0.1:5000');
+                // this.socket = io.connect('http://127.0.0.1:5000');
+                this.socket = io.connect('http://localhost');
                 this.socket.on("msg_client", (msgJson) => {
                     if (msgJson.msg) {
                         msgJson.date = new Date();
